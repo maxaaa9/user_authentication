@@ -1,4 +1,4 @@
-def username_and_password_validator(my_string: str) -> bool:
+def password_validator(my_string: str) -> bool:
     """This function will validate if username and password contains
         at least one upper character, symbol and check that len is more than 6"""
     if my_string.isalnum() and not my_string.islower():
@@ -11,29 +11,33 @@ def username_and_password_validator(my_string: str) -> bool:
         return False
 
 
+def username_validator(dictionary_check, check_username: str) -> bool:
+    if check_username not in dictionary_check:
+        return True
+    return False
+
+
 def user_registration(user_dictionary) -> dict:
     """This function will return new list with registered username with valid username and passwords"""
     new_dictionary = user_dictionary
     print("Register")
-    strength_username = False
-    while not strength_username:
+
+    username_exist = False
+    while not username_exist:
         username = input("Username: ")
-        strength_username = username_and_password_validator(username)
-        if not strength_username:
-            print("Your username must contain at least one upper character or symbol!")
+        username_exist = username_validator(new_dictionary, username)
+        if not username_exist:
+            print("This username already exist!")
 
     strength_password = False
     while not strength_password:
         password = input("Password: ")
-        strength_password = username_and_password_validator(password)
+        strength_password = password_validator(password)
         if not strength_password:
             print("Your password must contain at least one upper character or symbol!")
 
-    if strength_username and strength_password:
-        if username not in new_dictionary.keys():
-            new_dictionary[username] = password
-        else:
-            new_dictionary[username] = password
+    if strength_password and username_exist:
+        new_dictionary[username] = hash(password)
 
     return new_dictionary
 
@@ -41,7 +45,7 @@ def user_registration(user_dictionary) -> dict:
 def user_login(login_dictionary: dict) -> bool:
     check_dictionary = login_dictionary
     login_username = input("Username: ")
-    login_password = input("Password: ")
+    login_password = hash(input("Password: "))
     if login_username in check_dictionary.keys():
         if check_dictionary[login_username] == login_password:
             print(f"Greetings {login_username} your login was successful!\n Welcome to User Authentication Application")
